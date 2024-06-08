@@ -3,20 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:music_app/Screens/Player.dart';
 import 'package:music_app/Screens/Home.dart';
 
-class SearchPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Search Page'));
-  }
-}
-
-class CartPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Cart Page'));
-  }
-}
-
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
 
@@ -45,78 +31,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
   final List<IconData> icons = [
     Icons.more_vert_outlined,
     Icons.more_vert_outlined,
-    Icons.more_vert_outlined
+    Icons.more_vert_outlined,
   ];
 
-  int _selectedIndex = 0;
-  final PageController _pageController = PageController();
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    _pageController.jumpToPage(index);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(24, 24, 24, 1),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        children: [
-          PlayerScreen(),
-          SearchPage(),
-          HomeScreen(),
-          CartPage(),
-          GalleryScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.orange,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/fav.png')),
-            label: 'Favourite',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/search.png')),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/linear.png')),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/cart.png')),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/user.png')),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        unselectedItemColor: Colors.black,
-        showUnselectedLabels: true,
-        unselectedLabelStyle:
-            const TextStyle(color: Color.fromARGB(255, 219, 122, 11)),
-        onTap: _onItemTapped,
-      ),
-    );
-  }
+  final List<WidgetBuilder> detailPageBuilders = [
+    (context) => const GalleryScreen(),
+    (context) => const HomeScreen(),
+    (context) => const PlayerScreen(),
+  ];
 
   Widget _buildSectionHeader(String title, String actionText) {
     return Row(
@@ -246,6 +168,226 @@ class _GalleryScreenState extends State<GalleryScreen> {
             color: Colors.white,
           )
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromRGBO(24, 24, 24, 1),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Image.asset(
+                  "assets/images/gallery1.png",
+                  width: double.infinity,
+                  height: 367,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 220,
+                  left: 50,
+                  child: Text(
+                    "A.L.O.N.E",
+                    style: GoogleFonts.inter(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 270,
+                  left: 50,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(19),
+                      color: const Color.fromRGBO(255, 46, 0, 1),
+                    ),
+                    height: 37,
+                    width: 127,
+                    child: Center(
+                      child: Text(
+                        "Subscribe",
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: const Color.fromRGBO(19, 19, 19, 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("assets/images/r1.png"),
+                const SizedBox(width: 2),
+                Image.asset("assets/images/r2.png"),
+                const SizedBox(width: 2),
+                Image.asset("assets/images/r2.png"),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildSectionHeader("Discography", "See all"),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: ListView.builder(
+                itemCount: images.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return _buildDiscographyItem(index);
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildSectionHeader("Popular singles", "See all"),
+            const SizedBox(height: 20),
+            ListView.builder(
+              itemCount: title2.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return _buildSingleItem(index);
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6.0,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(19, 19, 19, 1),
+          ),
+          height: 82.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PlayerScreen(),
+                    ),
+                  );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.favorite_outline,
+                      color: Color.fromRGBO(157, 178, 206, 1),
+                    ),
+                    Text(
+                      "Favourite",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color.fromRGBO(157, 178, 206, 1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    Icons.search,
+                    color: Color.fromARGB(255, 135, 135, 138),
+                  ),
+                  Text(
+                    "Search",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color.fromRGBO(157, 178, 206, 1),
+                    ),
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PlayerScreen(),
+                    ),
+                  );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.home_outlined,
+                      color: Color.fromARGB(255, 135, 135, 138),
+                    ),
+                    Text(
+                      "Home",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 135, 135, 138),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    Icons.car_repair_rounded,
+                    color: Color.fromARGB(255, 135, 135, 138),
+                  ),
+                  Text(
+                    "Cart",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color.fromARGB(255, 135, 135, 138),
+                    ),
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GalleryScreen(),
+                    ),
+                  );
+                },
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.person,
+                      color: Color.fromRGBO(230, 154, 21, 1),
+                    ),
+                    Text(
+                      "Profile",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color.fromRGBO(230, 154, 21, 1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
